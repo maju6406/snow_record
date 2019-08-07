@@ -1,0 +1,21 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "description": "Read a ServiceNow object",
+    "remote": true,
+    "files": ["ruby_task_helper/files/task_helper.rb"],
+    "parameters": {
+        "table": {
+            "description": "ServiceNow table",
+            "type": "Optional[String[1]]"
+        },
+        "number": {
+            "description": "ServiceNow number",
+            "type": "Optional[String[1]]"
+        },
+        "lookup_field": {
+            "description": "ServiceNow lookup_field",
+            "type": "Optional[String[1]]"
+        }
+    }
+}

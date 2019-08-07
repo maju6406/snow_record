@@ -1,7 +1,17 @@
 {
-  "puppet_task_version": 1,
-  "supports_noop": false,
-  "description": "A short description of this task",
-  "parameters": {
-  }
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "description": "Get a ServiceNow object",
+    "files": ["ruby_task_helper/files/task_helper.rb"],
+    "remote": true,
+    "parameters": {
+        "table": {
+            "description": "ServiceNow table",
+            "type": "Optional[String[1]]"
+        },
+        "data": {
+            "description": "ServiceNow data",
+            "type": "String[1]"
+        }
+    }
 }

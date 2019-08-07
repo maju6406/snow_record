@@ -5,16 +5,16 @@
     "files": ["ruby_task_helper/files/task_helper.rb"],
     "remote": true,
     "parameters": {
-        "table": {
-            "description": "ServiceNow table",
-            "type": "Optional[String[1]]"
-        },
         "sys_id": {
             "description": "ServiceNow sys_id",
             "type": "String[1]"
         },
-        "data": {
-            "description": "ServiceNow data",
+        "close_notes": {
+            "description": "ServiceNow close notes",
+            "type": "String[1]"
+        },
+        "additional_data": {
+            "description": "ServiceNow additional data",
             "type": "String[1]"
         }
     }

@@ -1,28 +1,48 @@
-#!/bin/sh
+#!/opt/puppetlabs/puppet/bin/ruby
 
-# Puppet Task Name: update
-#
-# This is where you put the shell code for your task.
-#
-# You can write Puppet tasks in any language you want and it's easy to
-# adapt an existing Python, PowerShell, Ruby, etc. script. Learn more at:
-# https://puppet.com/docs/bolt/0.x/writing_tasks.html
-#
-# Puppet tasks make it easy for you to enable others to use your script. Tasks
-# describe what it does, explains parameters and which are required or optional,
-# as well as validates parameter type. For examples, if parameter "instances"
-# must be an integer and the optional "datacenter" parameter must be one of
-# portland, sydney, belfast or singapore then the .json file
-# would include:
-#   "parameters": {
-#     "instances": {
-#       "description": "Number of instances to create",
-#       "type": "Integer"
-#     },
-#     "datacenter": {
-#       "description": "Datacenter where instances will be created",
-#       "type": "Enum[portland, sydney, belfast, singapore]"
-#     }
-#   }
-# Learn more at: https://puppet.com/docs/bolt/0.x/writing_tasks.html#ariaid-title11
-#
+require "base64"
+require "json"
+
+require "net/http"
+require "openssl"
+
+require_relative "../../ruby_task_helper/files/task_helper.rb"
+
+class SnowUpdate < TaskHelper
+  def task(table: "incident",
+           state: "present",
+           sys_id: nil,
+           data: nil,
+           _target: nil,
+           **kwargs)
+    user = _target[:user]
+    password = _target[:password]
+    instance = _target[:name]
+
+    uri = URI.parse("https://#{instance}.service-now.com/api/now/table/#{table}/#{sys_id}")
+
+    begin
+      Net::HTTP.start(uri.host, uri.port,
+                      :use_ssl => uri.scheme == "https",
+                      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+        header = { 'Content-Type': "application/json" }
+        request = Net::HTTP::Patch.new("#{uri.path}?#{uri.query.to_s}", header)
+        request.body = data
+        request.basic_auth(user, password)
+        response = http.request(request)
+        datum = response.body
+        obj = JSON.parse(datum)
+        pretty_str = JSON.pretty_unparse(obj)
+        res = [pretty_str]
+        puts res
+      end
+    rescue => e
+      puts "ERROR: #{e}"
+      raise TaskHelper::Error.new("Failure!", "snow_record.create", e)
+    end
+  end
+end
+
+if __FILE__ == $0
+  SnowUpdate.run
+end

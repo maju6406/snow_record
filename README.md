@@ -1,87 +1,129 @@
+[![Build Status](https://travis-ci.org/maju6406/snow_record.svg?branch=master)](https://travis-ci.org/maju6406/cert_sign)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/beersy/snow_record.svg)](https://forge.puppetlabs.com/beersy/snow_record)
+
 # snow_record
 
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
-
-The README template below provides a starting point with details about what information to include in your README.
+This task manage records in ServiceNow.
 
 #### Table of Contents
 
 1. [Description](#description)
 2. [Setup - The basics of getting started with snow_record](#setup)
-    * [What snow_record affects](#what-snow_record-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with snow_record](#beginning-with-snow_record)
 3. [Usage - Configuration options and additional functionality](#usage)
-4. [Limitations - OS compatibility, etc.](#limitations)
-5. [Development - Guide for contributing to the module](#development)
+4. [Examples](#examples)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
 
 ## Description
 
-Briefly tell users why they might want to use your module. Explain what your module does and what kind of problems users can solve with it.
+snow_record provides a series of tasks to interact with a ServiceNow Instance. The main 3 tasks included with this module:
 
-This should be a fairly short description helps the user decide if your module is what they want.
+* create - Create a ServiceNow object
+* read - Get a ServiceNow object
+* update - Update a ServiceNow object
+
+There are also 2 additional tasks for interacting with Incidents.
+
+* create_incident - Create an Incident
+* resolve_incident - Resolve an Incident
+
+Please read the [Limitations](#Limitations) before running these additional tasks.
 
 ## Setup
 
-### What snow_record affects **OPTIONAL**
+### Requirement for executing task
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
-
-### Beginning with snow_record
-
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
+The [puppetlabs-ruby_task_helper](https://forge.puppet.com/puppetlabs/ruby_task_helper) module should be installed
 
 ## Usage
 
-Include usage examples for common use cases in the **Usage** section. Show your users how to use your module to solve problems, and be sure to include code examples. Include three to five examples of the most important or common tasks a user can accomplish with your module. Show users how to accomplish more complex tasks that involve different types, classes, and functions working in tandem.
+The tasks can be executed from bolt by supplying an basic inventory file:
 
-## Reference
-
-This section is deprecated. Instead, add reference information to your code as Puppet Strings comments, and then use Strings to generate a REFERENCE.md in your module. For details on how to add code comments and generate documentation with Strings, see the Puppet Strings [documentation](https://puppet.com/docs/puppet/latest/puppet_strings.html) and [style guide](https://puppet.com/docs/puppet/latest/puppet_strings_style.html)
-
-If you aren't ready to use Strings yet, manually create a REFERENCE.md in the root of your module directory and list out each of your module's classes, defined types, facts, functions, Puppet tasks, task plans, and resource types and providers, along with the parameters for each.
-
-For each element (class, defined type, function, and so on), list:
-
-  * The data type, if applicable.
-  * A description of what the element does.
-  * Valid values, if the data type doesn't make it obvious.
-  * Default value, if any.
+* `name` ServiceNow Instance [name]..service-now.com
+* `config` of which:
+  * `transport` Always `remote`
+* remote:
+  * user: ServiceNow Username
+  * password: ServiceNow Password  
 
 For example:
 
+```bash
+nodes:
+  - name: dev85564
+    config:
+      transport: remote
+      remote:
+        user: admin
+        password: "XHxH2tmZ69*Vbh"
 ```
-### `pet::cat`
 
-#### Parameters
+## Examples
 
-##### `meow`
+### Getting incident INC000701
 
-Enables vocalization in your cat. Valid options: 'string'.
+```bash
+bolt task run --nodes dev85564 snow_record::read number=INC000701
+```
 
-Default: 'medium-loud'.
+### Getting incident from sys_id ff4c21c4735123002728660c4cf6a758
+
+```bash
+bolt task run --nodes dev85563 snow_record::read lookup_field=sys_id number=ff4c21c4735123002728660c4cf6a758
+```
+
+### Getting user record from sys_id fe82abf03710200044e0bfc8bcbe5d34
+
+```bash
+bolt task run --nodes dev85563 snow_record::read table=sys_user lookup_field=sys_id number=fe82abf03710200044e0bfc8bcbe5d34
+```
+
+### Creating an user
+
+```bash
+bolt task run --nodes dev85564 snow_record::create table=sys_user data='{"first_name":"Frank","last_name":"Sinatra"}'
+```
+
+### Updating a user's city (using Update)
+
+```bash
+bolt task run --nodes dev85564 snow_record::update table=sys_user sys_id=fe82abf03710200044e0bfc8bcbe5d34 data='{"city":"Pittsburgh"}'
+```
+
+### Creating an incident
+
+```bash
+bolt task run --nodes dev85564 snow_record::create_incident urgency=1 priority=2 severity=3 additional_data='{"short_description":"This is a test incident opened by Puppet"}'
+```
+
+### Resolving an incident
+
+```bash
+bolt task run --nodes dev85564 snow_record::resolve_incident sys_id=fa8ecfe6db8373009395af264896199e close_notes="Closing Time1" additional_data='{"close_code":"Solved (Work Around)"}'
+```
+
+### A Sample plan
+A sample plan is included in the [plans](http://github.com/maju6406/snow_record/plans) folder.
+```bash
+bolt plan run snow_record::example nodes=dev85564
 ```
 
 ## Limitations
 
-In the Limitations section, list any incompatibilities, known issues, or other warnings.
+These tasks have been tested with a Madrid developer instance. The task has been tested on macOS and Centos.
+
+ServiceNow is a highly customized environment. `create_incident` and `resolve_incident` assume your incident states are similar to the default developer instance. If the create_incident and resolve_incident don't work for you, use the more generic `create` and `update` tasks.
 
 ## Development
 
-In the Development section, tell other users the ground rules for contributing to your project and how they should submit their work.
+TODOS:  
+
+* Add more error handling
+* Add more convenience tasks
+* Add delete
+
+Feel free to contribute. PRs on github always appreciated!
 
 ## Release Notes/Contributors/Etc. **Optional**
 
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You can also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
+0.1 Initial release

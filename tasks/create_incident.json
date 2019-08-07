@@ -1,7 +1,25 @@
 {
-  "puppet_task_version": 1,
-  "supports_noop": false,
-  "description": "A short description of this task",
-  "parameters": {
-  }
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "description": "Get a ServiceNow object",
+    "files": ["ruby_task_helper/files/task_helper.rb"],
+    "remote": true,
+    "parameters": {
+        "additional_data": {
+            "description": "ServiceNow additional_data",
+            "type": "Optional[String[1]]"
+        },
+        "urgency": {
+            "description": "ServiceNow urgency",
+            "type": "Optional[String[1]]"
+        },
+        "priority": {
+            "description": "ServiceNow priority",
+            "type": "Optional[String[1]]"
+        },
+        "severity": {
+            "description": "ServiceNow severity",
+            "type": "Optional[String[1]]"
+        }
+    }
 }
