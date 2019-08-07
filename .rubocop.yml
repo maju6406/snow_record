@@ -124,3 +124,6 @@ Style/IfUnlessModifier:
   Enabled: false
 Style/SymbolProc:
   Enabled: false
+Lint/UnderscorePrefixedVariableName:
+  Description: Do not use prefix `_` for a variable that is used.
+  Enabled: false
