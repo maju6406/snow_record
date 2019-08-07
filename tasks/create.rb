@@ -1,19 +1,19 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 
-require "base64"
-require "json"
+require 'base64'
+require 'json'
 
-require "net/http"
-require "openssl"
+require 'net/http'
+require 'openssl'
 
-require_relative "../../ruby_task_helper/files/task_helper.rb"
+require_relative '../../ruby_task_helper/files/task_helper.rb'
 
+# This task creates objects
 class SnowCreate < TaskHelper
-  def task(table: "incident",
-           state: "present",
+  def task(table: 'incident',
            data: nil,
            _target: nil,
-           **kwargs)
+           **_kwargs)
 
     user = _target[:user]
     password = _target[:password]
@@ -23,10 +23,10 @@ class SnowCreate < TaskHelper
 
     begin
       Net::HTTP.start(uri.host, uri.port,
-                      :use_ssl => uri.scheme == "https",
-                      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-        header = { 'Content-Type': "application/json" }
-        request = Net::HTTP::Post.new("#{uri.path}?#{uri.query.to_s}", header)
+                      use_ssl: uri.scheme == 'https',
+                      verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+        header = { 'Content-Type' => 'application/json' }
+        request = Net::HTTP::Post.new("#{uri.path}?#{uri.query}", header)
         request.body = data
         request.basic_auth(user, password)
         response = http.request(request)
@@ -38,11 +38,11 @@ class SnowCreate < TaskHelper
       end
     rescue => e
       puts "ERROR: #{e}"
-      raise TaskHelper::Error.new("Failure!", "snow_record.create", e)
+      raise TaskHelper::Error.new('Failure!', 'snow_record.create', e)
     end
   end
 end
 
-if __FILE__ == $0
+if $PROGRAM_NAME == __FILE__
   SnowCreate.run
 end

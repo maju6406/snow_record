@@ -1,32 +1,32 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 
-require "base64"
-require "json"
+require 'base64'
+require 'json'
 
-require "net/http"
-require "openssl"
+require 'net/http'
+require 'openssl'
 
-require_relative "../../ruby_task_helper/files/task_helper.rb"
+require_relative '../../ruby_task_helper/files/task_helper.rb'
 
 # Return an error
 def return_error(message)
   result = {}
   result[:_error] = {
     msg: message,
-    kind: "snow_record.read",
+    kind: 'snow_record.read',
     details: {},
   }
-  #puts result.to_json
-  raise TaskHelper::Error.new("Failure!", "snow_record.read", result)
+  # puts result.to_json
+  raise TaskHelper::Error.new('Failure!', 'snow_record.read', result)
 end
 
+# This task reads incidents
 class SnowRead < TaskHelper
-  def task(table: "incident",
-           lookup_field: "number",
-           data: nil,
+  def task(table: 'incident',
+           lookup_field: 'number',
            number: nil,
            _target: nil,
-           **kwargs)
+           **_kwargs)
     user = _target[:user]
     password = _target[:password]
     instance = _target[:name]
@@ -39,9 +39,10 @@ class SnowRead < TaskHelper
     uri = URI.parse("https://#{instance}.service-now.com/api/now/table/#{table}")
 
     Net::HTTP.start(uri.host, uri.port,
-                    :use_ssl => uri.scheme == "https",
-                    :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-      request = Net::HTTP::Get.new("#{uri.path}?#{qp}", initheader = { "Content-Type" => "application/json" })
+                    use_ssl: uri.scheme == 'https',
+                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+      header = { 'Content-Type' => 'application/json' }
+      request = Net::HTTP::Get.new("#{uri.path}?#{qp}", header)
       request.basic_auth(user, password)
       response = http.request(request)
       pretty_str = JSON.pretty_unparse(JSON.parse(response.body))
@@ -54,4 +55,4 @@ class SnowRead < TaskHelper
   end
 end
 
-SnowRead.run if __FILE__ == $0
+SnowRead.run if $PROGRAM_NAME == __FILE__

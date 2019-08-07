@@ -1,22 +1,21 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 
-require "base64"
-require "json"
+require 'base64'
+require 'json'
 
-require "net/http"
-require "openssl"
+require 'net/http'
+require 'openssl'
 
-require_relative "../../ruby_task_helper/files/task_helper.rb"
+require_relative '../../ruby_task_helper/files/task_helper.rb'
 
+# This task creates incidents
 class SnowCreateIncident < TaskHelper
-  def task(table: "incident",
-           state: "present",
-           urgency: nil,
+  def task(urgency: nil,
            priority: nil,
            severity: nil,
            additional_data: {},
            _target: nil,
-           **kwargs)
+           **_kwargs)
     user = _target[:user]
     password = _target[:password]
     instance = _target[:name]
@@ -25,12 +24,12 @@ class SnowCreateIncident < TaskHelper
 
     begin
       Net::HTTP.start(uri.host, uri.port,
-                      :use_ssl => uri.scheme == "https",
-                      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-        header = { 'Content-Type': "application/json" }
-        request = Net::HTTP::Post.new("#{uri.path}?#{uri.query.to_s}", header)
+                      use_ssl: uri.scheme == 'https',
+                      verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+        header = { 'Content-Type' => 'application/json' }
+        request = Net::HTTP::Post.new("#{uri.path}?#{uri.query}", header)
 
-        data = Hash.new
+        data = {}
 
         parsed = JSON.parse(additional_data)
         parsed.each do |key, val|
@@ -38,15 +37,15 @@ class SnowCreateIncident < TaskHelper
         end
 
         unless urgency.nil?
-          data.store("urgency", urgency)
+          data.store('urgency', urgency)
         end
 
         unless severity.nil?
-          data.store("severity", severity)
+          data.store('severity', severity)
         end
 
         unless priority.nil?
-          data.store("priority", priority)
+          data.store('priority', priority)
         end
 
         request.body = data.to_json
@@ -60,11 +59,11 @@ class SnowCreateIncident < TaskHelper
       end
     rescue => e
       puts "ERROR: #{e}"
-      raise TaskHelper::Error.new("Failure!", "snow_record.create_incident", e)
+      raise TaskHelper::Error.new('Failure!', 'snow_record.create_incident', e)
     end
   end
 end
 
-if __FILE__ == $0
+if $PROGRAM_NAME == __FILE__
   SnowCreateIncident.run
 end

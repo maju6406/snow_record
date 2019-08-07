@@ -1,21 +1,21 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 
-require "base64"
-require "json"
+require 'base64'
+require 'json'
 
-require "net/http"
-require "openssl"
+require 'net/http'
+require 'openssl'
 
-require_relative "../../ruby_task_helper/files/task_helper.rb"
+require_relative '../../ruby_task_helper/files/task_helper.rb'
 
-class SnowUpdate < TaskHelper
-  def task(table: "incident",
-           state: "present",
+# This task updates objects
+class SnowResolveIncident < TaskHelper
+  def task(table: 'incident',
            sys_id: nil,
            additional_data: {},
            close_notes: nil,
            _target: nil,
-           **kwargs)
+           **_kwargs)
     user = _target[:user]
     password = _target[:password]
     instance = _target[:name]
@@ -24,21 +24,21 @@ class SnowUpdate < TaskHelper
 
     begin
       Net::HTTP.start(uri.host, uri.port,
-                      :use_ssl => uri.scheme == "https",
-                      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-        header = { 'Content-Type': "application/json" }
-        request = Net::HTTP::Patch.new("#{uri.path}?#{uri.query.to_s}", header)
+                      use_ssl: uri.scheme == 'https',
+                      verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+        header = { 'Content-Type' => 'application/json' }
+        request = Net::HTTP::Patch.new("#{uri.path}?#{uri.query}", header)
 
-        data = Hash.new
+        data = {}
 
         parsed = JSON.parse(additional_data)
         parsed.each do |key, val|
           data[key] = val
         end
-        data.store("close_notes", close_notes)
-        data.store("sys_id", sys_id)
-        data.store("state", "6")
-        data.store("incident_state", "6")
+        data.store('close_notes', close_notes)
+        data.store('sys_id', sys_id)
+        data.store('state', '6')
+        data.store('incident_state', '6')
 
         request.body = data.to_json
         request.basic_auth(user, password)
@@ -51,11 +51,11 @@ class SnowUpdate < TaskHelper
       end
     rescue => e
       puts "ERROR: #{e}"
-      raise TaskHelper::Error.new("Failure!", "snow_record.create", e)
+      raise TaskHelper::Error.new('Failure!', 'snow_record.create', e)
     end
   end
 end
 
-if __FILE__ == $0
-  SnowUpdate.run
+if $PROGRAM_NAME == __FILE__
+  SnowResolveIncident.run
 end
