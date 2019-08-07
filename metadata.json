@@ -1,56 +1,61 @@
 {
-    "name": "beersy-snow_record",
-    "version": "0.1.0",
-    "author": "Abir Majumdar",
-    "summary": "Series of tasks to interact with a ServiceNow Instance",
-    "license": "Apache-2.0",
-    "source": "http://github.com/maju6406/snow_record",
-    "dependencies": [{
-        "name": "puppetlabs/ruby_task_helper",
-        "version_requirement": ">= 0.3.0 <= 2.0.0"
-    }],
-    "operatingsystem_support": [{
-            "operatingsystem": "CentOS",
-            "operatingsystemrelease": [
-                "7"
-            ]
-        },
-        {
-            "operatingsystem": "OracleLinux",
-            "operatingsystemrelease": [
-                "7"
-            ]
-        },
-        {
-            "operatingsystem": "RedHat",
-            "operatingsystemrelease": [
-                "8"
-            ]
-        },
-        {
-            "operatingsystem": "Scientific",
-            "operatingsystemrelease": [
-                "7"
-            ]
-        },
-        {
-            "operatingsystem": "Debian",
-            "operatingsystemrelease": [
-                "9"
-            ]
-        },
-        {
-            "operatingsystem": "Ubuntu",
-            "operatingsystemrelease": [
-                "18.04"
-            ]
-        }
-    ],
-    "requirements": [{
-        "name": "puppet",
-        "version_requirement": ">= 4.10.0 < 7.0.0"
-    }],
-    "pdk-version": "1.12.0",
-    "template-url": "pdk-default#1.12.0",
-    "template-ref": "1.12.0-0-g55d9ae2"
+  "name": "beersy-snow_record",
+  "version": "0.1.1",
+  "author": "Abir Majumdar",
+  "summary": "Series of tasks to interact with a ServiceNow Instance",
+  "license": "Apache-2.0",
+  "source": "http://github.com/maju6406/snow_record",
+  "dependencies": [
+    {
+      "name": "puppetlabs/ruby_task_helper",
+      "version_requirement": ">= 0.3.0 <= 2.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "9"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "18.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.10.0 < 7.0.0"
+    }
+  ],
+  "pdk-version": "1.12.0",
+  "template-url": "pdk-default#1.12.0",
+  "template-ref": "1.12.0-0-g55d9ae2"
 }
