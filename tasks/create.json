@@ -1,7 +1,7 @@
 {
     "puppet_task_version": 1,
     "supports_noop": false,
-    "description": "Get a ServiceNow object",
+    "description": "Create a ServiceNow object",
     "files": ["ruby_task_helper/files/task_helper.rb"],
     "remote": true,
     "parameters": {

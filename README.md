@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/maju6406/snow_record.svg?branch=master)](https://travis-ci.org/maju6406/cert_sign)
+[![Build Status](https://travis-ci.org/maju6406/snow_record.svg?branch=master)](https://travis-ci.org/maju6406/snow_record)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/beersy/snow_record.svg)](https://forge.puppetlabs.com/beersy/snow_record)
 
 # snow_record
@@ -66,16 +66,16 @@ nodes:
 bolt task run --nodes dev85564 snow_record::read number=INC000701
 ```
 
-### Getting incident from sys_id ff4c21c4735123002728660c4cf6a758
+### Getting incident from sys_id
 
 ```bash
-bolt task run --nodes dev85563 snow_record::read lookup_field=sys_id number=ff4c21c4735123002728660c4cf6a758
+bolt task run --nodes dev85564 snow_record::read lookup_field=sys_id number=ff4d21c4735123002728660c4cf6a758
 ```
 
-### Getting user record from sys_id fe82abf03710200044e0bfc8bcbe5d34
+### Getting user record from sys_id
 
 ```bash
-bolt task run --nodes dev85563 snow_record::read table=sys_user lookup_field=sys_id number=fe82abf03710200044e0bfc8bcbe5d34
+bolt task run --nodes dev85564 snow_record::read table=sys_user lookup_field=sys_id number=fe82abf0371000044e0bfc8bcbe5d34
 ```
 
 ### Creating an user
@@ -87,7 +87,7 @@ bolt task run --nodes dev85564 snow_record::create table=sys_user data='{"first_
 ### Updating a user's city (using Update)
 
 ```bash
-bolt task run --nodes dev85564 snow_record::update table=sys_user sys_id=fe82abf03710200044e0bfc8bcbe5d34 data='{"city":"Pittsburgh"}'
+bolt task run --nodes dev85564 snow_record::update table=sys_user sys_id=fe82abf03710400044e0bfc8bcbe5d34 data='{"city":"Pittsburgh"}'
 ```
 
 ### Creating an incident
@@ -99,7 +99,7 @@ bolt task run --nodes dev85564 snow_record::create_incident urgency=1 priority=2
 ### Resolving an incident
 
 ```bash
-bolt task run --nodes dev85564 snow_record::resolve_incident sys_id=fa8ecfe6db8373009395af264896199e close_notes="Closing Time1" additional_data='{"close_code":"Solved (Work Around)"}'
+bolt task run --nodes dev85564 snow_record::resolve_incident sys_id=fa8ecfe6db8363009395af264896199e close_notes="Closing Time1" additional_data='{"close_code":"Solved (Work Around)"}'
 ```
 
 ### A Sample plan
